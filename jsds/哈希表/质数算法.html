@@ -1,0 +1,29 @@
+<meta charset="UTF-8">
+<script>
+  /**
+   * 只能被 1 和 自己整除
+   * 1 3 5 7 11
+   */
+
+  function isPrime2(num) {
+    for (let i = 2; i < num; i++) {
+      if (num % i === 0) {
+        return false
+      }
+    }
+    return true
+  }
+
+  function isPrime (num) {
+    let temp = parseInt(Math.sqrt(num))
+    for (let i = 2; i < temp; i++) {
+      if (temp % i === 0) {
+        return false
+      }
+    }
+    return true
+  }
+
+
+  console.log(isPrime(11))
+</script>

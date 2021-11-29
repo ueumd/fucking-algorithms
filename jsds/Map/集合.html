@@ -1,0 +1,51 @@
+<meta charset="UTF-8">
+<script>
+  class Set {
+    constructor() {
+      this.items = {}
+    }
+
+    has(value) {
+      return this.items.hasOwnProperty(value)
+    }
+
+    add(value) {
+      if (this.has(value)) return false
+      this.items[value] = value
+      return true
+    }
+
+    remove(value) {
+      if (!this.has(value)) return false
+      delete this.items[value]
+      return true
+    }
+
+    clear() {
+      this.items = {}
+    }
+
+    size() {
+      return Object.keys(this.items).length
+    }
+
+    values() {
+      return Object.keys(this.items)
+      /*
+       考虑兼容性问题, 使用下面的代码
+       var keys = []
+       for (var value in this.items) {
+           keys.push(value)
+       }
+       return keys
+       */
+    }
+
+  }
+
+  let set = new Set()
+  set.add('A')
+  set.add('B')
+  set.add('C')
+
+</script>

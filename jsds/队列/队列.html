@@ -1,0 +1,91 @@
+<meta charset="UTF-8">
+<script>
+  /**
+   先进先出(FIFO First In First Out) A,B,C,D
+   1 基于数据
+   2 基于链表 (性能更高)
+
+
+   delQueue                    enQueue
+   ----------------------------------
+   <-  A | B | C | D|              <-
+   ---------------------------------
+   front                          End
+   只能表的前端进行删除失操作，表的后端进行插入操作
+   */
+  class Queue {
+    constructor() {
+      this.items = []
+    }
+
+    enQueue(ele) {
+      this.items.push(ele)
+    }
+
+    // 移除队列的第一个元素，并返回被移除的元素
+    deQueue() {
+      return this.items.shift()
+    }
+
+    front() {
+      return this.items[0]
+    }
+
+    isEmpty() {
+      return this.items.length === 0
+    }
+
+    clear() {
+      this.items = []
+    }
+
+    size() {
+      return this.items.length
+    }
+
+    print() {
+      return this.items.toString()
+    }
+  }
+
+  let s = new Queue()
+  s.enQueue('A')
+  s.enQueue('B')
+  console.log(s.print())
+
+  var users = ['小王', '小明', '小红', '小夏', '小小']
+  var num = 2
+
+  /**
+   * 游戏规则：十几人或几十人围成圆圈坐下，其中一人拿花，一人背着大家或蒙眼击鼓，击鼓n次，就传n次,到一轮之后，花在谁手中，谁就淘汰，最后只剩一人
+   */
+  function hotPotatoGame(users, num) {
+    var q = new Queue()
+    /*
+     * 依次加入队列
+     * <-                               <-
+     * '小王', '小明', '小红', '小夏', '小小'
+     */
+    for (let i = 0; i < users.length; i++) {
+      q.enQueue(users[i])
+    }
+
+    while (q.size() > 1) {
+
+      // 不符条件的先从队头删除，再从队尾插入
+      for (let i = 0; i < num; i++) {
+        q.enQueue(q.deQueue())
+      }
+
+      // 符合条件的直接删除
+      console.log(q.deQueue() + ' 淘汰~')
+
+    }
+
+    console.log(q)
+    // 返回最终剩下的那个人
+    return q.front()
+  }
+
+  console.log(hotPotatoGame(users, num) + '留下~')
+</script>

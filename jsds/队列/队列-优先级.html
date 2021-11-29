@@ -1,0 +1,86 @@
+<meta charset="UTF-8">
+<script>
+  /**
+   优先级限队列根据priority 来确定插入的位置
+   场景：排队叫号
+
+   */
+
+  class QueueElement {
+    constructor(element, priority) {
+      this.element = element
+      this.priority = priority
+    }
+  }
+
+  class PriorityQueue {
+    constructor() {
+      this.items = []
+    }
+
+
+    enqueue(element, priority) {
+      var ele = new QueueElement(element, priority)
+      if (this.isEmpty()) {
+        this.items.push(ele)
+      } else {
+        let isAdd = 0
+        for (let i= 0; i<this.size(); i++) {
+          if (ele.priority < this.items[i].priority) {
+            this.items.splice(i, 0, ele)
+            isAdd = 1
+            break
+          }
+        }
+
+        // 优先级很低
+        if (!isAdd) {
+          this.items.push(ele)
+        }
+      }
+    }
+
+    // 移除队列的第一个元素，并返回被移除的元素
+    dequeue() {
+      return this.items.shift()
+    }
+
+    front() {
+      return this.items[0]
+    }
+
+    isEmpty() {
+      return this.items.length === 0
+    }
+
+    clear() {
+      this.items = []
+    }
+
+    size() {
+      return this.items.length
+    }
+
+    print() {
+      return this.items.toString()
+    }
+
+
+  }
+
+  // 创建优先级队列对象
+  var pQueue = new PriorityQueue()
+
+  // 添加元素
+  pQueue.enqueue("abc", 10)
+  pQueue.enqueue("cba", 5)
+  pQueue.enqueue("nba", 12)
+  pQueue.enqueue("mba", 3)
+
+  // 遍历所有的元素
+  var size = pQueue.size()
+  for (var i = 0; i < size; i++) {
+    // var item = pQueue.dequeue()
+    // console.log(item.element + "-" + item.priority)
+  }
+</script>

@@ -1,0 +1,191 @@
+<meta charset="UTF-8">
+<script>
+
+  function Vertex(label, wasVisited) {       //表示顶点
+    this.label = label;
+    this.wasVisited = wasVisited;
+  }
+
+  function Graph(v) {
+    this.vertices = v;
+    this.edges = 0;
+    this.adj = [];
+    this.marked = [];                    //顶点是否已经被访问
+
+    for (var i = 0; i < this.vertices; ++i) {
+      this.adj[i] = [];
+      this.adj[i].push("");
+      this.marked[i] = false;
+    }
+
+    this.edgeTo = [];                    //保存从一个顶点到下一个顶点的所有边
+    this.vertexList = [];
+    this.addEdge = addEdge;
+    this.toString = toString;
+    this.showGraph = showGraph;
+    this.dfs = dfs;
+    this.bfs = bfs;
+    this.bfsMin = bfsMin;
+    this.pathTo = pathTo;
+    this.hasPathTo = hasPathTo;
+    this.topSort = topSort;
+    this.topSortHelper = topSortHelper;
+  }
+
+  function addEdge(v, m) {
+    this.adj[v].push(m);
+    this.adj[m].push(v);
+    this.edges++;
+  }
+
+  function showGraph() {
+    for (var i = 0; i < this.vertices; ++i) {
+      var str = "";
+      str += (i + "->");
+      for (var j = 0; j < this.vertices; ++j) {
+        if (this.adj[i][j] != undefined) {
+          str += (this.adj[i][j] + " ");
+        }
+      }
+      console.log(str);
+    }
+  }
+
+  function dfs(v) {                       //深度优先搜索函数
+    this.marked[v] = true;
+    if (this.adj[v] != undefined) {
+      console.log("Visited vertex:" + v);
+      for (var w in this.adj[v]) {
+        var c = this.adj[v][w];
+        if (!this.marked[c]) {
+          this.dfs(c);
+        }
+      }
+    }
+  }
+
+  function bfs(s) {                       //广度优先搜索函数
+    var queue = [];
+    this.marked[s] = true;
+    queue.push(s)                   //添加到队尾
+    while (queue.length > 0) {
+      var v = queue.shift();      //从队首移除
+      if (this.adj[v] != undefined) {
+        console.log("Visited vertex:" + v);
+      }
+      for (var w in this.adj[v]) {
+        var c = this.adj[v][w];
+        if (!this.marked[c]) {
+          this.marked[c] = true;
+          queue.push(c);
+        }
+      }
+    }
+  }
+
+  //广度优先搜索对应的最短路径
+  function bfsMin(s) {
+    var queue = [];
+    this.marked[s] = true;
+    queue.push(s);
+    while (queue.length > 0) {
+      var v = queue.shift();
+      if (v == undefined) {
+        console.log("Visited vertex:" + v);
+      }
+      for (var w in this.adj[v]) {
+        var c = this.adj[v][w];
+        if (!this.marked[c]) {
+          this.edgeTo[c] = v;
+          this.marked[c] = true;
+          queue.push(c);
+        }
+      }
+    }
+  }
+
+  function pathTo(v) {
+    var source = 0;
+    if (!this.hasPathTo(v)) {
+      return undefined;
+    }
+    var path = [];
+    for (var i = v; i != source; i = this.edgeTo[i]) {
+      path.push(i);
+    }
+    path.push(source);
+    return path;
+  }
+
+  function hasPathTo(v) {
+    return this.marked[v];
+  }
+
+  //拓扑排序
+  function topSort() {
+    var stack = [];
+    var visited = [];
+    for (var i = 0; i < this.vertices; i++) {
+      visited[i] = false;
+    }
+    for (var i = 0; i < this.vertices; i++) {
+      if (visited[i] == false) {
+        this.topSortHelper(i, visited, stack);
+      }
+    }
+    for (var i = 0; i < stack.length; i++) {
+      if (stack[i] != undefined && stack[i] !== false) {
+        console.log(this.vertexList[stack[i]]);
+      }
+    }
+  }
+
+  function topSortHelper(v, visited, stack) {
+    visited[v] = true;
+    for (var w in this.adj[v]) {
+      var c = this.adj[v][w];
+      if (!visited[c]) {
+        this.topSortHelper(visited[c], visited, stack);
+      }
+    }
+    stack.push(v);
+  }
+
+
+  //最短路径测试
+  var g = new Graph(5);
+  g.addEdge(0, 1);
+  g.addEdge(0, 2);
+  g.addEdge(1, 3);
+  g.addEdge(2, 4);
+  g.showGraph();
+  g.bfsMin(0);
+  var vertex = 4;
+  var paths = g.pathTo(vertex);
+  console.log(paths.join("-"));
+  console.log("----------");
+  //拓扑排序测试
+  var g2 = new Graph(6);
+  g2.addEdge(1, 2);
+  g2.addEdge(2, 5);
+  g2.addEdge(1, 3);
+  g2.addEdge(1, 4);
+  g2.addEdge(0, 1);
+  g2.vertexList = ["CS1", "CS2", "DATA", "ASS", "OPER", "ALG"];
+  g2.showGraph();
+  g2.topSort();
+
+
+
+  let count = 0
+  count = localStorage.get('isViewed')
+  if (count) {
+    // count === 1 表示访问过了
+    // 访问过
+  }  else {
+
+    // 设置 isViewed=1 表示已经访问了
+    localStorage.set('isViewed', 1)
+  }
+
+</script>

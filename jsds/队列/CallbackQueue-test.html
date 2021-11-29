@@ -1,0 +1,74 @@
+<meta charset="UTF-8">
+<script type="module">
+  import Queue from './CallbackQueue.js'
+  //切菜
+  function cutUp(){
+    return new Promise(function(resolve, reject){        //做一些异步操作
+      reject('没刀咋切菜')
+    })
+  }
+
+  //烧水
+  function boil(){
+    return new Promise(function(resolve, reject){        //做一些异步操作
+      resolve('烧好的水')
+    })
+  }
+
+  function cook(){
+    return new Promise(function(resolve, reject){
+      resolve('鸡蛋炒饭')
+    })
+  }
+
+  function f() {
+    return Promise.reject('FFFFFFFF')
+  }
+
+  var query = Queue(
+    null,
+    () => {Promise.resolve()}
+  )
+
+  // 闭包
+  let fns = [cutUp, f, boil, cook]
+  fns.forEach((fn, i) => {
+    query.next(
+      (query) => {
+        fn().then(data => {
+          console.log(data)
+          query()
+          return
+        }).catch(e => {
+          console.error(e)
+          query()
+          return
+        })
+      }
+    )
+  })
+  query.start()
+
+
+
+  function f1(arg) {
+    if (arg) {
+      console.log(arg)
+      return
+    }
+    console.log('f1')
+  }
+
+  // 比队列执行的早
+  f1.apply(null, ['hello'])
+
+  /**
+   打印顺序：
+
+   hello
+   没刀咋切菜
+   FFFFFFFF
+   烧好的水
+   鸡蛋炒饭
+   */
+</script>

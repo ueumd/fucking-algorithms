@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+  /**
+   vertices: ['A', 'B', 'C', 'D']
+   adjList: {
+    A: [B, C, D]
+    B: [A  E  F  ],
+    C: [A  D  ]
+   }
+   */
+  var Graph = function () {
+    var vertices = [] //顶点
+    var adjList = {} // 边
+    var edges = 0
+
+    // 添加顶点
+    this.addVertex = function (v) {
+      vertices.push(v)
+      adjList[v] = []
+    }
+
+    this.addEdge = function (a, b) {
+      adjList[a].push(b)
+      adjList[b].push(a)
+      edges++
+    }
+
+    this.print = function () {
+      let s = ''
+      for (let i = 0; i < vertices.length; i++) {
+        let dingdian = vertices[i]
+        let bian = adjList[dingdian]
+
+        s += dingdian + ' => '
+
+        for (let j = 0; j < bian.length; j++) {
+          s += bian[j] + '  '
+        }
+        s += '\n'
+      }
+      console.log(s)
+    }
+
+
+
+    // 广度遍历
+    var setColor = function () {
+      let color = {}
+      for (let i=0; i<vertices.length; i++) {
+        color[vertices[i]] = 'white'
+      }
+
+      return color
+    }
+
+
+    this.bfs = function (v, callback) {
+
+      let color = setColor()
+
+      let arr = []
+      arr.push(v)
+      while (arr.length) {
+        let now = arr.shift()
+        let bian = adjList[now]
+
+
+        for (let i=0; i<bian.length; i++) {
+          let w = bian[i]
+
+          if (color[w] === 'white') {
+            color[w] = 'gray'
+            arr.push(w)
+          }
+        }
+
+        color[now] = "black"
+        if(callback) {
+          callback(now)
+        }
+      }
+
+
+
+    }
+
+
+  }
+
+  var g = new Graph()
+  g.addVertex('A')
+  g.addVertex('B')
+  g.addVertex('C')
+  g.addVertex('D')
+  g.addVertex('E')
+  g.addVertex('F')
+
+  g.addEdge('A', 'B')
+  g.addEdge('A', 'C')
+  g.addEdge('A', 'D')
+  g.addEdge('B', 'E')
+  g.addEdge('C', 'D')
+  g.addEdge('F', 'B')
+
+
+</script>
+</body>
+</html>

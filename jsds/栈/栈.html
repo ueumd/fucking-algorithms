@@ -1,0 +1,40 @@
+<meta charSet="UTF-8">
+<script type="module">
+  import Stack from './Stack.js'
+
+  window.stack = new Stack()
+  stack.push('A')
+    .push('B')
+    .push('C')
+
+
+  /**
+   * 这里用字符串train表示火车，H表示硬席，S表示软席
+   * @param {String} train
+   */
+  function trainArrange(train){
+    let stack = new Stack();
+    let q = [];
+    let i = 0;
+    let j = 0;
+
+    while(train[i]){
+      if(train[i] === 'H') stack.push(train[i]);
+      else q[j++] = train[i];
+      i++;
+    }
+
+    let c = stack.pop();
+    while(c && c.element){
+      c = stack.pop();
+      if (c && c.element) {
+        q[j++] = c.element
+      }
+    }
+
+    return q
+  }
+
+    console.log('trainArrange: ' + trainArrange('HSSHSSSHHHHHS'));  // trainArrange: S,S,S,S,S,S,H,H,H,H,H,H,H
+
+</script>

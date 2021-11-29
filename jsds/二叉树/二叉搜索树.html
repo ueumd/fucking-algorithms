@@ -1,0 +1,347 @@
+<meta charset="UTF-8">
+<script>
+  class Node {
+    constructor(key) {
+      this.key = key
+      this.left = null
+      this.right = null
+    }
+  }
+
+  class BinarySearchTree {
+    constructor() {
+      this.root = null
+    }
+
+    insert(key) {
+      let newNode = new Node(key)
+      if (this.root === null) {
+        this.root = newNode
+      } else {
+        this.insertNode(this.root, newNode)
+      }
+    }
+
+    /**
+     * 左边子树小于右边子树的值
+     * @param node
+     * @param newNode
+     */
+    insertNode(node, newNode) {
+      // 准备向左子树插入数据
+      if (newNode.key < node.key) {
+        if (node.left === null) {
+          node.left = newNode
+        } else {
+          // 子树上有内容递归
+          this.insertNode(node.left, newNode)
+        }
+      } else {
+        // 准备向右子树插入数据
+        if (node.right === null) {
+          node.right = newNode
+        } else {
+          this.insertNode(node.right, newNode)
+        }
+      }
+    }
+
+    search(key) {
+      let node = this.root
+      while (node !== null) {
+
+        if (node.key > key) {          // 根节点大于key 左子树
+          node = node.left
+        } else if (node.key < key) {   // 根节点小于key 右子树
+          node = node.right
+        } else {
+          // 找到（包含root）
+          return true
+        }
+      }
+      // 未找到
+      return false
+    }
+
+    getRoot() {
+      return this.root
+    }
+
+    /**
+     * 最大的节点: 根节点  右子树上
+     */
+    maxNode() {
+      let node = this.root
+      if (node) {
+        while (node && node.right !== null) {
+          node = node.right
+        }
+        return node
+      }
+      return null
+    }
+
+    /**
+     * 最小节点: 根节点  左子树上
+     */
+    minNode() {
+      let node = this.root
+      if (node) {
+        while (node && node.left !== null) {
+          node = node.left
+        }
+
+        return node
+      }
+      return null
+    }
+
+    /**
+     移除节点的实现情况比较复杂，它会有三种不同的情况：
+     1. 需要移除的节点是一个叶子节点
+     2. 需要移除的节点包含一个子节点
+     3. 需要移除的节点包含两个子节点
+     和实现搜索指定节点一元，要移除某个节点，必须先找到它所在的位置，因此移除方法的实现中部分代码和上面相同：
+     */
+    remove(key) {
+      this.removeNode(this.root, key)
+    }
+
+    removeNode(node, key) {
+      if (node === null) {
+        return null
+      }
+      if (key < node.key) {
+        node.left = this.removeNode(node.left, key)
+        return node
+      } else if (key > node.key) {
+        node.right = this.removeNode(node.right, key)
+        return node
+      } else {
+        //需要移除的节点是一个叶子节点
+        if (node.left === null && node.right === null) {
+          node = null
+          return node
+        }
+        //需要移除的节点包含一个子节点
+        if (node.left === null) {
+          node = node.right
+          return node
+        } else if (node.right === null) {
+          node = node.left
+          return node
+        }
+        //需要移除的节点包含两个子节点
+        let aux = this.minNode(node.right)
+        node.key = aux.key
+        node.right = this.removeNode(node.right, aux.key)
+        return node
+      }
+    }
+
+    /**
+     * 先序遍历  根 左 右
+     */
+    preOrderTraversal(cb) {
+      this.preOrderTraversalNode(this.root, cb)
+    }
+
+    preOrderTraversalNode(node, cb) {
+      if (node !== null) {
+        cb(node.key)
+        // 递归算法
+        this.preOrderTraversalNode(node.left, cb)
+        this.preOrderTraversalNode(node.right, cb)
+      }
+    }
+
+    /**
+     非递归遍历（利用栈：将遍历到的结点都依次存入栈中，拿结果时从栈中访问）
+
+     1. 初始化一个栈，将根节点压入栈中；
+     2. 当栈为非空时，循环执行步骤3到4，否则执行结束；
+     3. 从队列取得一个结点（取的是栈中最后一个结点），将该值放入结果数组；
+     4. 若该结点的右子树为非空，则将该结点的右子树入栈，若该结点的左子树为非空，则将该结点的左子树入栈；
+     （注意：先将右结点压入栈中，后压入左结点，从栈中取得时候是取最后一个入栈的结点，而先序遍历要先遍历左子树，后遍历右子树）
+     */
+
+    ptn() {
+      let result = []
+      let stack = []
+      stack.push(this.root)
+
+      while (stack.length) {
+        let node = stack.pop()
+        result.push(node.key)
+        if (node.right) stack.push(node.right)
+        if (node.left) stack.push(node.left)
+      }
+      return result
+    }
+
+    /**
+     * 中序遍历 左 根 右
+     */
+    inOrderTraversal(cb) {
+      this.inOrderTraversalNode(this.root, cb)
+    }
+
+    inOrderTraversalNode(node, cb) {
+      if (node !== null) {
+        this.inOrderTraversalNode(node.left, cb)
+        cb(node.key)
+        this.inOrderTraversalNode(node.right, cb)
+      }
+    }
+
+    // 左 根 右
+    itn(node) {
+      let result = []
+      let stack = []
+
+      while (stack.length || node) {
+        if (node) {
+          stack.push(node)
+          node = node.left
+        } else {
+          node = stack.pop()
+          result.push(node.key)
+          node = node.right
+        }
+      }
+      return result
+    }
+
+    /**
+     * 后序遍历 左 右 根
+     */
+    postOrderTraversal(cb) {
+      this.postOrderTraversalNode(this.root, cb)
+    }
+
+    postOrderTraversalNode(node, cb) {
+      if (node !== null) {
+        this.postOrderTraversalNode(node.left, cb)
+        this.postOrderTraversalNode(node.right, cb)
+        cb(node.key)
+      }
+    }
+
+    // 层遍历
+    bfs() {
+      let result = []
+      let stack = [this.root]
+
+      let count = 0; // 用来记录执行到第一层
+      let bfs2 = function () {
+        let node = stack[count];
+        if (node) {
+          result.push(node.key);
+          if (node.left) stack.push(node.left);
+          if (node.right) stack.push(node.right);
+          count++;
+          bfs2();
+        }
+      }
+      bfs2()
+      return result
+    }
+
+    // 非递归算法
+    bfs2(node) {
+      let result = [];
+      let queue = [];
+      queue.push(node);
+      let pointer = 0;
+      while (pointer < queue.length) {
+        let node = queue[pointer++]; // // 这里不使用 shift 方法（复杂度高），用一个指针代替
+        result.push(node.ke);
+        node.left && queue.push(node.left);
+        node.right && queue.push(node.right);
+      }
+      return result;
+    }
+
+    /**
+     翻转二叉树
+     4
+     /   \
+     2     7
+     / \   / \
+     1   3 6   9
+
+     4
+     /   \
+     7     2
+     / \   / \
+     9  6 3   1
+     */
+    invertTree(node = this.root) {
+      if (node === null) {
+        return
+      }
+      this.invertTree(node.left)
+      this.invertTree(node.right)
+      this.exchange(node)
+    }
+
+    exchange(node) {
+      let temp = node.left
+      node.left = node.right
+      node.right = temp
+    }
+  }
+
+  /**
+   11,7,15,5,3,9,8,10,13,12,14,20,18,25,6
+   先序遍历: 11，7，5，3，6，9，8，10，15，13，12，14，20，18，25
+   中序遍历: 3，5，6，7，8，9，10，11，12，13，14，15，18，20，25
+   后序遍历: 3，6，5，8，10，9，7，12，14，13，18，25，20，15，11
+   */
+
+  var tree = new BinarySearchTree()
+  tree.insert(11)
+  tree.insert(7)
+  tree.insert(15)
+  tree.insert(5)
+  tree.insert(3)
+  tree.insert(9)
+  tree.insert(8)
+  tree.insert(10)
+  tree.insert(13)
+  tree.insert(12)
+  tree.insert(14)
+  tree.insert(20)
+  tree.insert(18)
+  tree.insert(25)
+  tree.insert(6)
+
+  let res = ''
+
+  function print(node) {
+    res += node + ' '
+    // console.log(node)
+  }
+
+  tree.preOrderTraversal(print) //先序遍历11，7，5，3，6，9，8，10，15，13，12，14，20，18，25
+  console.log(res)
+  res = ''
+
+  tree.inOrderTraversal(print) //3 5 6 7 8 9 10 11 12 13 14 15 18 20 25
+  console.log(res)
+  res = ''
+
+  tree.postOrderTraversal(print) //3 6 5 8 10 9 7 12 14 13 18 25 20 15 11
+  console.log(res)
+  res = ''
+
+  let result = tree.ptn()
+  console.log('1111111', result)
+
+  console.log(tree.itn(tree.root))
+
+
+  console.log(tree.bfs())
+
+  tree.invertTree()
+</script>

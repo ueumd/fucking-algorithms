@@ -1,0 +1,73 @@
+<meta charset="UTF-8">
+<script>
+  // 详解ES6通过WeakMap解决内存泄漏问题
+  /**
+   new Map()
+   * 操作方法
+     set(key, value)：设置（新增/更新）键key的值为value，返回Map对象。
+     get(key)：读取键key的值，没有则返回undefined。
+     has(key)：判断一个Map对象中是否存在某个键值对，返回true/false。
+     delete(key)：删除某个键值对，返回true/false。
+     clear()：清除Map对象中所有键值对。
+
+
+   遍历方法
+     keys()：返回键名的Iterator对象。
+     values()：返回键值的Iterator对象。
+     entries()：返回键值对的Iterator对象。
+     forEach((value, key, map) => {})：遍历Map对象所有键值对。
+
+
+   二、WeakMap
+   1.定义
+      WeakMap对象保存键值对，与Map不同的是其键必须是对象，因为键是弱引用，在键对象消失后自动释放内存。
+
+   2.语法
+      new WeakMap([iterable])
+
+   方法
+     set(key, value)：设置（新增/更新）键key的值为value，返回WeakMap对象。
+     get(key)：读取键key的值，没有则返回undefined。
+     has(key)：判断一个WeakMap对象中是否存在某个键值对，返回true/false。
+     delete(key)：删除某个键值对，返回true/false。
+
+   注意
+      因为WeakMap的特殊的垃圾回收机制，所以没有clear()方法。
+
+
+
+   三、通过WeakMap解决内存泄漏问题
+     当使用Dom对象绑定事件时，Dom对象消失后若没有及时释放内存（置null），便会一直存在内存中。
+     使用WeakMap保存Dom对象不会出现这样的问题，因为Dom对象消失后，JS的垃圾回收机制便会自动释放其所占用的内存。
+
+     let wm = new WeakMap()
+     let btn = document.querySelector('#btn')
+     wm.set(btn, {count: 0})
+     btn.addEventListener('click', () => {
+        let v = wm.get(btn)
+        v.count++
+        console.log(wm.get(btn).count)  // 1 2 3 4 5...
+     })
+
+   */
+
+  var m = new Map([
+    ['foo', 11],
+    ['bar', 22]
+  ])
+
+  m.set('age', 1)
+  m.set('city', '上海')
+  m.has('age') //true
+  m.get('age') // 1
+
+
+  let obj = {foo: 11}
+  let wm = new WeakMap()
+  wm.set(obj, 413322)
+  console.log(wm)            // {{…} => 413322}
+  console.log(wm.has(obj))  // true
+
+
+
+</script>

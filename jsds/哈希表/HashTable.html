@@ -1,0 +1,162 @@
+<meta charset="UTF-8">
+<script>
+  class HashTable {
+    constructor () {
+      this.limit = 8
+      this.count = 0
+      this.storage = []
+    }
+
+    isPrime (num) {
+      let temp = parseInt(Math.sqrt(num))
+      for (let i = 2; i <= temp; i++) {
+        if (num % i === 0) {
+          return false
+        }
+      }
+      return true
+    }
+
+    getPrime (num) {
+      while (!this.isPrime(num)) {
+        num ++
+      }
+      return num
+    }
+
+    hash (str, max) {
+      let hashCode = 0
+      // 2.霍纳算法, 来计算hashCode的数值
+      for (let i = 0; i < str.length; i++) {
+        hashCode = 37 * hashCode + str.charCodeAt(i)
+      }
+      // 3.取模运算
+      hashCode = hashCode % max
+      return hashCode
+    }
+
+    // 哈希扩容
+    resize (newLimit) {
+      // 保存旧的数组
+      let oldStroage = this.storage
+
+      // 重置属性
+      this.limit = newLimit
+      this.count = 0
+      this.storage = []
+
+      // 遍历旧数组中的所有数据项, 并且重新插入到哈希表中
+      oldStroage.forEach((bucket) => {
+        if (!bucket) return
+
+        for (let i =0; i<bucket.length; i++) {
+          let tuple = bucket[i]
+          this.put(tuple[0], tuple[1])
+        }
+      })
+    }
+
+    put (key, value) {
+      // 1.获取key对应的index
+      let index = this.hash(key, this.limit)
+
+      // 2.取出数组(也可以使用链表)
+      // 数组中放置数据的方式: [[ [k,v], [k,v], [k,v] ] , [ [k,v], [k,v] ]  [ [k,v] ] ]
+      let bucket  = this.storage[index]
+
+      // 3判断这个桶是否存在
+      if (bucket === undefined) {
+        // 创建新桶
+        bucket = []
+        this.storage[index] = bucket
+      }
+
+      // bucket 存在
+      // 4 判断是不是要修改值
+      let override = false
+      for (let i = 0; i < bucket.length; i++) {
+       // let tuple = bucket[i]
+        if (bucket[i][0] === key) {
+          bucket[i][1] = value
+          override = true
+        }
+      }
+
+      // 5.如果是新增, 前一步没有覆盖
+      if (!override) {
+        bucket.push([key, value])
+        this.count ++
+
+        // 判断是否要扩容
+        if (this.count > this.limit * 0.75) {
+          let primeNum = this.getPrime(this.limit * 2)
+          this.resize(primeNum)
+        }
+      }
+    }
+
+    get (key) {
+      // 获取key 对应的index
+      let index = this.hash(key, this.limit)
+
+      let bucket = this.storage[index]
+
+      if (bucket === undefined) {
+        return null
+      }
+
+      for (let i = 0; i < bucket.length; i++) {
+        if (bucket[i][0] === key) {
+          return bucket[i][1]
+        }
+      }
+
+      return
+    }
+
+    remove(key) {
+      let index = this.hash(key, this.limit)
+      let bucket = this.storage[index]
+
+      if (bucket === undefined) {
+        return null
+      }
+
+      // 4.遍历bucket, 寻找对应的数据
+      for (let i = 0; i < bucket.length; i++) {
+        if (bucket[i][0] === key) {
+          bucket.splice(i, 1)
+          this.count --
+
+          // 缩小数组的容量
+          if (this.limit > 7 && this.count < this.limit * 0.25) {
+            let primeNum = this.getPrime(Math.floor(this.limit / 2))
+            this.resize(primeNum)
+          }
+        }
+        return bucket[i][1]
+      }
+      // 5.来到该位置, 说明没有对应的数据, 那么返回null
+      return null
+    }
+
+    isEmpty () {
+      return this.count === 0
+    }
+
+    size () {
+      return this.count
+    }
+  }
+
+  var ht = new HashTable()
+  ht.put("abc", "123")
+  ht.put("cba", "321")
+  ht.put("nba", "521")
+  ht.put("mba", "520")
+  ht.put("amb", "520")
+  ht.put("name", "Hello")
+  ht.put("age", 100)
+  ht.put("city", "shanghai")
+  ht.put("code", "021")
+</script>

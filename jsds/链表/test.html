@@ -1,0 +1,32 @@
+<meta charset="UTF-8">
+<script type="module">
+  import DoublyLinkedList from './DoublyLinkedList.js'
+  let list = new DoublyLinkedList()
+  list.append('A')
+  list.append('B')
+  list.append('D')
+  list.append({ value: 1, key: 'test1' })
+    .append({ value: 2, key: 'test2' })
+    .append({ value: 3, key: 'test3' })
+
+
+  let node = list.find({
+    callback: (value) => {
+      return value.key === 'test1'
+    }
+  })
+
+  console.log(node)
+</script>
+
+<script type="module">
+  import SinglyLinkedList from './SinglyLinkedList.js'
+  window.singly = new SinglyLinkedList()
+  singly.append('A')
+  singly.append('B')
+  singly.append('D')
+
+  let node = singly.theKthNode(2)
+  console.log(node)
+
+</script>

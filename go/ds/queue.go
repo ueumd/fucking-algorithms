@@ -28,7 +28,6 @@ func (queue *ArrayQueue) Add(element string) {
 	defer queue.lock.Unlock()
 
 	queue.array = append(queue.array, element)
-
 	queue.size += 1
 }
 

@@ -27,7 +27,6 @@ import "fmt"
 
 // 二分搜索最常用模板
 func binarySearch(nums []int, target int) int  {
-
 	// 1
 	start, end := 0, len(nums)-1
 
@@ -57,9 +56,35 @@ func binarySearch(nums []int, target int) int  {
 	return -1
 }
 
+func search(nums []int, target int) int {
+	low, high := 0, len(nums)-1
+	var mid int
+	for low <= high {
+		mid = (high + low) / 2
+		if target == nums[mid] {
+			return mid
+		} else if (target > nums[mid]) {
+			// 目标值 在 右边，低位加+1
+			low = mid + 1
+		} else if target < nums[mid] {
+			// 目标值 在 左边，高位-1
+			high = mid - 1
+		} else {
+			return -1
+		}
+	}
+	return -1
+}
+
 func main()  {
 	nums := []int{-1,0,3,5,9,12}
 	target:=9
 
 	fmt.Println(binarySearch(nums, target)) // 4
+
+	// fmt.Println(search(nums, target))
+
+	 arr2 := []int{1, 2, 3, 4, 5, 6, 7}
+	fmt.Println(search(arr2, 3))
+
 }

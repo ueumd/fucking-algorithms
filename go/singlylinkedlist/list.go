@@ -1,7 +1,7 @@
 package singlylinkedlist
 
 type Container interface {
-	Empty() bool
+	IsEmpty() bool
 	Size() int
 	Clear()
 	Values() []interface{}
